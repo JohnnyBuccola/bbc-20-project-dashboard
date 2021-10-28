@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>PF Projects Dashboard</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+  <link rel="icon" type="image/png" href="../static/favicon.png">
+</head>
+
+<body>
+  <div class="container">
+    <div class="jumbotron text-center">
+      <h1>CFA Projects Dashboard</h1>
+    </div>
+
+    <!-- Tableau Embeds -->
+    <div class="row" id="project-metrics">
+      <h2>Quick Metrics</h2>
+      <div class="col-md-6 embed-responsive embed-responsive-4by3">
+        <iframe
+          src="https://10ay.online.tableau.com/t/projectfroganalytics/views/frog-project-dashboard/ProjectsbyPrototype?:showAppBanner=false&:display_count=n&:showVizHome=n&:origin=viz_share_link&:embed=true"></iframe>
+      </div>
+      <div class="col-md-6 embed-responsive embed-responsive-4by3">
+        <iframe
+          src="https://10ay.online.tableau.com/t/projectfroganalytics/views/frog-project-dashboard/ProjectCountbyStatus?:display_count=n&:showAppBanner=false&:origin=viz_share_link&:showVizHome=n&:embed=true"></iframe>
+      </div>
+    </div>
+    <hr>
+    <!-- Section for Map -->
+    <div class="row" id="map-dashboard">
+      <h2>Project Map</h2>
+      <div class="embed-responsive embed-responsive-16by9">
+        <iframe
+          src="https://10ay.online.tableau.com/t/projectfroganalytics/views/frog-project-dashboard/Map?:showAppBanner=false&:display_count=n&:showVizHome=n&:origin=viz_share_link&:embed=true"></iframe>
+      </div>
+    </div>
+    <hr>
+    <!-- Section for Market Data -->
+    <div class="row" id="market-dashboard">
+      <h2>Lumber Index and $/bf</h2>
+      <div class="embed-responsive embed-responsive-16by9">
+        <iframe
+          src="https://10ay.online.tableau.com/t/projectfroganalytics/views/frog-project-dashboard/MarketCorrelationLBS?:showAppBanner=false&:display_count=n&:showVizHome=n&:origin=viz_share_link&:embed=true"></iframe>
+      </div>
+    </div>
+    <hr>
+    <!-- Section for Calculator -->
+    <div class="row" id="price-estimator">
+      <h2>Cost Calculator</h2>
+      <div class='form-group'>
+        <div class="card-body">
+          <blockquote class="blockquote text-center">
+            <p class="mb-0">GOOD THINGS TAKE TIME!</p>
+            <footer class="blockquote-footer">Ghandi or something probably</footer>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- Section for Utilities -->
+    <div class="row" id="utilities">
+      <h2>Utilities</h2>
+
+      <div class="col-sm-4">
+        <form method="POST" action="/sync">
+          <input class="btn btn-primary" type="submit" value="Sync Database" name="sync"
+            title="Gets latest data from smartsheet (projects) and yahoo finance (LBS)">
+        </form>
+      </div>
+
+      <div class="col-sm-4">
+        <form method="POST" action="/deleteProjects">
+          <input class="btn btn-danger" type="submit" value="Delete Projects" name="deleteProjects"
+            title="Deletes all db rows from the Projects table. Does not affect smartsheet data." />
+        </form>
+      </div>
+      <div class="col-sm-4">
+        <form method="POST" action="/deleteLumber">
+          <input class="btn btn-danger" type="submit" value="Delete Lumber Prices" name="deleteLumber"
+            title="Deletes all db rows from the Lumber Index table. Does not affect smartsheet data." />
+        </form>
+      </div>
+    </div>
+
+    <div class="form-row" id="message">
+      <div class="col-auto">
+        <label id="sync-message">{{sync_message}}</textarea>
+      </div>
+    </div>
+    <hr>
+</body>
+
+</html>
