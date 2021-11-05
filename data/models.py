@@ -13,6 +13,7 @@ class Project(db.Model):
     prototype_suffix = db.Column(db.String)
     region = db.Column(db.String)
     wall_panels_cost = db.Column(db.Float)
+    wall_panels_cost_per_elev_sqft = db.Column(db.Float)
     buyout_total = db.Column(db.Integer)
     panels_onsite_date = db.Column(db.Date)
     sales_order_date = db.Column(db.Date)
@@ -25,7 +26,7 @@ class Project(db.Model):
 
     def __init__(self, id, lat, long, city, state, address, sqft, \
                 prototype_prefix, prototype_suffix, region, \
-                wall_panels_cost, buyout_total, panels_onsite_date, \
+                wall_panels_cost, wall_panels_cost_per_elev_sqft, buyout_total, panels_onsite_date, \
                 sales_order_date, panel_vendor, 
                 n_wall_panels_ext, n_wall_panels_int, sqft_wall_panels_ext, sqft_wall_panels_int, project_status):
         self.id = id
@@ -39,6 +40,7 @@ class Project(db.Model):
         self.prototype_suffix = prototype_suffix
         self.region = region
         self.wall_panels_cost = wall_panels_cost
+        self.wall_panels_cost_per_elev_sqft = wall_panels_cost_per_elev_sqft
         self.buyout_total = buyout_total
         self.panels_onsite_date = panels_onsite_date
         self.sales_order_date = sales_order_date

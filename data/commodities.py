@@ -1,5 +1,6 @@
 import pandas as pd
 import yfinance as yf
+import datetime
 from sqlalchemy import select
 from api_config import LUMBER_INDEX
 from .models import Lumber_Price
@@ -21,12 +22,24 @@ def commodity_exists(db,_class,tuple):
         return True
     return False
 
+def clean_commodities_df(df):
+    # Create date scaffolding
+    date_idx = pd.date_range(start='2018-05-01', end=datetime.datetime.today().strftime('%Y-%m-%d'),freq='D',name='date')
+    # Drop unused columns
+    cleaned_df = df.drop(columns=["High","Low","Stock Splits", "Dividends","Volume"])
+    # Regenerate index using scaffolding, and forward-fill values for 
+    # missing dates (weekends and holidays when the market was closed)
+    cleaned_df = cleaned_df.reindex(date_idx,method='ffill')
+    # drop anything still missing, just in case (nothing should be)
+    cleaned_df = cleaned_df.dropna(axis=0,how='any')
+    return cleaned_df
+
 def sync_commodities(db): 
     # Get historical data
     historical_df = get_historical_info(LUMBER_INDEX)
     
     # Clean dataframe
-    historical_df.drop(columns=["High","Low","Stock Splits", "Dividends","Volume"],inplace=True)
+    historical_df = clean_commodities_df(historical_df)
 
     #Iterate through dataframe and load
     added = 0

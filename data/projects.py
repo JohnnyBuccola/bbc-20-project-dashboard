@@ -7,18 +7,21 @@ import traceback
 from sqlalchemy import select
 from .models import Project
 
-## Wall Panel Cost; Sales Order Date; Panels Onsite Date
+# Sales Order Date; Panels Onsite Date; prototype; square footages
 SUPPLY_CHAIN_SHEET_ID = '8581360311920516'
 
-# ?
-PROJECT_SHEET_ID = '4456738465310596'
-CFA_TRACKER_SHEET_ID = '5063848718821252'
+# Wood Walls costs
+COST_ESTIMATE_SHEET_ID = '8607939717031812'
+
+# Unused ?
+# PROJECT_SHEET_ID = '4456738465310596'
+# CFA_MASTER = '5769032839260036'
 
 # Project Address, City, State
-CFA_MASTER = '5769032839260036'
+CFA_TRACKER_SHEET_ID = '5063848718821252'
 
 # Clean sample
-SAMPLE_SHEET_ID = '7416230777776004'
+# SAMPLE_SHEET_ID = '7416230777776004'
 
 # Google Maps Client (for get_coords)
 gmaps = GoogleMaps(GOOGLE_API_KEY)
@@ -50,6 +53,16 @@ def get_smartsheet_data(SHEET_ID):
     print("Done")
     return column_map, sheet
 
+def clean_cfa_cost_estimate_df(cfa_cost_df_raw):
+    cols = ["CFA_Project_Number", "Wood_Walls_CSW"]
+    cfa_cost_df = cfa_cost_df_raw[cols]
+    cfa_cost_df = cfa_cost_df[cfa_cost_df["Wood_Walls_CSW"] > 0][cols]
+    cfa_cost_df["CFA_Project_Number"] = pd.to_numeric(cfa_cost_df["CFA_Project_Number"],downcast='integer',errors='coerce').fillna(0)
+    cfa_cost_df[cols].dropna(axis=0,how="any",inplace=True)
+    # remove any projects with number zero
+    cfa_cost_df = cfa_cost_df[cfa_cost_df['CFA_Project_Number'] > 0]
+    return cfa_cost_df
+
 def clean_cfa_tracker_df(cfa_tracker_df_raw):
     # select only address columns
     cols = ["Location_Number","Address", "City", "State"]
@@ -65,7 +78,7 @@ def clean_cfa_tracker_df(cfa_tracker_df_raw):
 ## clean dataframe from SC_CFA Master Budget v Buyout smartsheet
 def clean_sc_df(sc_df_raw):
     # get columns
-    cols = ['Location_Number','Prototype', 'Region','Awarded_Wall_Panel_Supplier','SO_Executed_Date','BUYOUT_Total','Panels_On_Site','sqft','Component_Model_Status','Wall_Panels','n_of_Ext_Wall_panel','n_of_Int_Wall_panel','sqft_of_Int_Wall_panel','sqft_of_Ext_Wall_panel']
+    cols = ['Location_Number','Prototype', 'Region','Awarded_Wall_Panel_Supplier','SO_Executed_Date','BUYOUT_Total','Panels_On_Site','sqft','Component_Model_Status','n_of_Ext_Wall_panel','n_of_Int_Wall_panel','sqft_of_Int_Wall_panel','sqft_of_Ext_Wall_panel']
     # filter out any project that does not have a wall panels cost
     sc_df=sc_df_raw[sc_df_raw['Wall_Panels'].notnull()][cols]
     # drop extra NA values (usually at the end)
@@ -79,7 +92,7 @@ def clean_sc_df(sc_df_raw):
 def sheet_to_dataframe(sheet):
     # Clean column headers for itertuples() in sync_projects()
     def remove_invalid_char(str):
-        return str.replace(" ", "_").replace("-","_").replace(".","").replace("#","n")
+        return str.replace(" ", "_").replace("-","_").replace(".","").replace("#","n").replace("(","").replace(")","")
     headers = [remove_invalid_char(col.title) for col in sheet.columns]
     rows = []
     for row in sheet.rows:
@@ -124,7 +137,8 @@ def add_project(db,project_tuple):
         sqft=int(project_tuple.sqft),
         prototype_prefix=project_tuple.Prototype.split(' ')[0],
         prototype_suffix= project_tuple.Prototype.split(' ')[1] if len(project_tuple.Prototype.split(' ')) > 1 else '',
-        wall_panels_cost=project_tuple.Wall_Panels,
+        wall_panels_cost=project_tuple.Wood_Walls_CSW,
+        wall_panels_cost_per_elev_sqft= (project_tuple.Wood_Walls_CSW)/(project_tuple.sqft_of_Ext_Wall_panel + project_tuple.sqft_of_Int_Wall_panel),
         buyout_total=project_tuple.BUYOUT_Total,
         panels_onsite_date=project_tuple.Panels_On_Site,
         sales_order_date=project_tuple.SO_Executed_Date,
@@ -150,12 +164,14 @@ def update_project(db, project_tuple):
 def sync_projects(db):
     added = 0
     updated = 0
-    ##TODO: join all dataframes
     sc_df_raw = sheet_to_dataframe(get_smartsheet_data(SUPPLY_CHAIN_SHEET_ID)[1])
     cfa_tracker_df_raw = sheet_to_dataframe(get_smartsheet_data(CFA_TRACKER_SHEET_ID)[1])
+    cfa_cost_estimate_df_raw = sheet_to_dataframe(get_smartsheet_data(COST_ESTIMATE_SHEET_ID)[1])
     sc_df = clean_sc_df(sc_df_raw)
     cfa_tracker_df = clean_cfa_tracker_df(cfa_tracker_df_raw)
+    cfa_cost_df = clean_cfa_cost_estimate_df(cfa_cost_estimate_df_raw)
     combined_df = sc_df.merge(cfa_tracker_df,how='left',left_on='Location_Number',right_on='Location_Number')
+    combined_df = combined_df.merge(cfa_cost_df,how='left',left_on='Location_Number',right_on='CFA_Project_Number')
     # Iterate through dataframe and add to db
     for row in combined_df.itertuples():
         try:
