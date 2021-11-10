@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect,render_template_string
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import os
@@ -56,6 +56,15 @@ def delete_projects():
         l_deleted = delete_all_projects(db)
         sync_message = f"{l_deleted} project records deleted. Press Sync to reload."
         return render_template("index.html",sync_message=sync_message)
+    else:
+        return render_template('index.html')
+
+@app.route("/get-estimate", methods=["GET"])
+def get_estimate():
+    if request.method == 'GET':
+        data = request.args
+        estimate_output = data['sqft']
+        return render_template_string("<b>$ {{estimate_output}} / sqft</b>",estimate_output=estimate_output)
     else:
         return render_template('index.html')
 

@@ -17,7 +17,7 @@
     </div>
 
     <!-- Tableau Embeds -->
-    <div class="row" id="project-metrics">
+    <div class="row container-fluid" id="project-metrics">
       <h2>Quick Metrics</h2>
       <div class="col-md-6 embed-responsive embed-responsive-4by3">
         <iframe
@@ -30,7 +30,7 @@
     </div>
     <hr>
     <!-- Section for Map -->
-    <div class="row" id="map-dashboard">
+    <div class="row container-fluid" id="map-dashboard">
       <h2>Project Map</h2>
       <div class="embed-responsive embed-responsive-16by9">
         <iframe
@@ -39,7 +39,7 @@
     </div>
     <hr>
     <!-- Section for Market Data -->
-    <div class="row" id="market-dashboard">
+    <div class="row container-fluid" id="market-dashboard">
       <h2>Lumber Index and $/bf</h2>
       <div class="embed-responsive embed-responsive-16by9">
         <iframe
@@ -50,18 +50,79 @@
     <!-- Section for Calculator -->
     <div class="row" id="price-estimator">
       <h2>Cost Calculator</h2>
-      <div class='form-group'>
-        <div class="card-body">
-          <blockquote class="blockquote text-center">
-            <p class="mb-0">GOOD THINGS TAKE TIME!</p>
-            <footer class="blockquote-footer">Ghandi or something probably</footer>
-          </blockquote>
+      <div class="col-md-6">
+        <div class='form-group' data-toggle="tooltip" data-placement="top"
+          title="Used for lumber index price (LBS). If date is in the future, today's price will be used.">
+          <label for="date">Date</label>
+          <input class='form-control' type="date" id='date'>
+        </div>
+        <div class='form-group'>
+          <label for="prototype-prefix">Prototype</label>
+          <select class="form-control" id='prototype-prefix'>
+            <option>P12</option>
+            <option>P13</option>
+          </select>
+        </div>
+        <div class='form-group'>
+          <label for="region">Region</label>
+          <select class="form-control" id='region'>
+            <option>Atlantic Region</option>
+            <option>Midwest Region</option>
+            <option>Northeast Region</option>
+            <option>Southeast Region</option>
+            <option>Southwest Region</option>
+            <option>West Region</option>
+          </select>
+        </div>
+        <div class='form-group'>
+          <label for="vendor">Vendor</label>
+          <select class="form-control" id='vendor'>
+            <option>Golden State</option>
+            <option>Mitsui</option>
+            <option>Redbuilt</option>
+            <option>SR Sloan</option>
+            <option>Stark Truss</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for='get-estimate-button'>Get Estimate</label>
+          <div class='col-sm'>
+            <!-- <form method='POST' action='/get-estimate'> -->
+            <button id='submit-estimate-btn' type="submit" class='btn btn-primary' name='get-estimate'>Submit</button>
+            <!-- </form> -->
+          </div>
+        </div> 
+      </div>
+      <div class='col-md-6'>
+        <div class='form-group'>
+          <label for="wall-panel-sqft-int">Est. <b>Interior</b> Wall Panel Sqft</label>
+          <input type="number" class='form-control' id='wall-panel-sqft-int' value='0'>
+        </div>
+        <div class='form-group'>
+          <label for="wall-panel-sqft-ext">Est. <b>Exterior</b> Wall Panel Sqft</label>
+          <input type="number" class='form-control' id='wall-panel-sqft-ext' value='0'>
+        </div>
+        <div class='form-group'>
+          <label for="sqft">Est. <b>Plan</b> Sqft</label>
+          <input type="number" class='form-control' id='sqft' value='0'>
+        </div>
+        <div class='form-group'>
+          <label for="algorithm">Algorithm</label>
+          <select class="form-control" id='algorithm'>
+            <option>KNNRegressor</option>
+            <option>RandomForestRegressor</option>
+            <option>LinearRegressor</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for='estimate-output'>Wall Panel Cost Per Elevation Sqft</label>
+            <h3 id='estimate-output'></h3> 
         </div>
       </div>
     </div>
-    <hr>
+      <hr>
 
-    <!-- Section for Utilities -->
+      <!-- Section for Utilities -->
     <div class="row" id="utilities">
       <h2>Utilities</h2>
 
@@ -88,10 +149,37 @@
 
     <div class="form-row" id="message">
       <div class="col-auto">
-        <label id="sync-message">{{sync_message}}</textarea>
+        <label id="sync-message">{{sync_message}}</label>
       </div>
     </div>
-    <hr>
+      <hr>
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+  $("#submit-estimate-btn").click(function(){
+      var data = {
+      'date': $("#date").val(),
+      'prototype-prefix': $("#prototype-prefix").val(),
+      'region': $("#region").val(),
+      'vendor': $("#vendor").val(),
+      'wall-panel-sqft-int': $("#wall-panel-sqft-int").val(),
+      'wall-panel-sqft-ext': $("#wall-panel-sqft-ext").val(),
+      'sqft': $("#sqft").val(),
+      'algorithm': $("#algorithm").val()
+      };
+  
+      $.ajax({
+        url: "/get-estimate",
+        type: "get",
+        data: data,
+        success: function(response) {
+          $("#estimate-output").html(response);
+        },
+        error: function(xhr) {
+          //Do Something to handle error
+        }
+      });
+  });
+  </script>
 
 </html>
