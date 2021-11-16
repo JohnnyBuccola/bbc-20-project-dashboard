@@ -13,7 +13,7 @@
 <body>
   <div class="container">
     <div class="jumbotron text-center">
-      <h1>CFA Projects Dashboard</h1>
+      <h1>Projects Dashboard</h1>
     </div>
 
     <!-- Tableau Embeds -->
@@ -115,71 +115,64 @@
           </select>
         </div>
         <div class="form-group">
+        <span class='border border-primary'>
           <label for='estimate-output'>Wall Panel Cost Per Elevation Sqft</label>
-            <h3 id='estimate-output'></h3> 
+          <h3 id='estimate-output'></h3> 
+        </span>
         </div>
       </div>
     </div>
       <hr>
 
       <!-- Section for Utilities -->
-    <div class="row" id="utilities">
-      <h2>Utilities</h2>
+    <div class="row" id="data-utilities">
+      <h2>Data Utilities</h2>
 
       <div class="col-sm-4">
         <form method="POST" action="/sync">
           <input class="btn btn-primary" type="submit" value="Sync Database" name="sync"
-            title="Gets latest data from smartsheet (projects) and yahoo finance (LBS)">
+            title="Gets latest data from smartsheet (projects) and yahoo finance (lumber) and stores them in the database.">
         </form>
       </div>
 
       <div class="col-sm-4">
         <form method="POST" action="/deleteProjects">
           <input class="btn btn-danger" type="submit" value="Delete Projects" name="deleteProjects"
-            title="Deletes all db rows from the Projects table. Does not affect smartsheet data." />
+            title="Deletes all db rows from the Projects table. Required before sync if fields in existing projects must change." />
         </form>
       </div>
       <div class="col-sm-4">
         <form method="POST" action="/deleteLumber">
           <input class="btn btn-danger" type="submit" value="Delete Lumber Prices" name="deleteLumber"
-            title="Deletes all db rows from the Lumber Index table. Does not affect smartsheet data." />
+            title="Deletes all db rows from the Lumber Index table." />
         </form>
       </div>
-    </div>
-
-    <div class="form-row" id="message">
-      <div class="col-auto">
-        <label id="sync-message">{{sync_message}}</label>
+    </div> 
+    <hr>
+    <div class="row" id="ml-utilities">
+      <h2>ML Utilities</h2>
+      <div class="col-sm-4">
+        <form method="POST" action="/train">
+          <input class="btn btn-info" type="submit" value="Train Algorithms" name="train"
+            title="Retrains all algorithms from database, then reports the scores of each.">
+        </form>
+      </div>
+    </div>  
+    <hr>
+    <div class='row' id='output'>
+      <h2>Utility Output</h2>
+      <div class="form-row">
+        <div class="col-auto">
+          <textarea class='form-control col-md-12' id="sync-message">{{sync_message}}</textarea>
+        </div>
       </div>
     </div>
-      <hr>
 </body>
+<hr>
+<footer>
+  <p>Author: Johnny Buccola</p>
+  <p>Original Completion Date: November 2021</p>
+</footer>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script>
-  $("#submit-estimate-btn").click(function(){
-      var data = {
-      'date': $("#date").val(),
-      'prototype-prefix': $("#prototype-prefix").val(),
-      'region': $("#region").val(),
-      'vendor': $("#vendor").val(),
-      'wall-panel-sqft-int': $("#wall-panel-sqft-int").val(),
-      'wall-panel-sqft-ext': $("#wall-panel-sqft-ext").val(),
-      'sqft': $("#sqft").val(),
-      'algorithm': $("#algorithm").val()
-      };
-  
-      $.ajax({
-        url: "/get-estimate",
-        type: "get",
-        data: data,
-        success: function(response) {
-          $("#estimate-output").html(response);
-        },
-        error: function(xhr) {
-          //Do Something to handle error
-        }
-      });
-  });
-  </script>
-
+<script src="../static/js/events.js"></script>
 </html>

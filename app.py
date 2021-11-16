@@ -64,7 +64,7 @@ def get_estimate():
     if request.method == 'GET':
         data = request.args
         estimate_output = data['sqft']
-        return render_template_string("<b>$ {{estimate_output}} / sqft</b>",estimate_output=estimate_output)
+        return render_template_string("<b>$ {{estimate_output}} / sqft</b> &#128020 &#128020 &#128020",estimate_output=estimate_output)
     else:
         return render_template('index.html')
 

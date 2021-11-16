@@ -5,3 +5,4 @@ pandas
 smartsheet-python-sdk
 yfinance
 googlemaps
+scikit-learn
