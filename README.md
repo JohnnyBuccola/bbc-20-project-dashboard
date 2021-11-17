@@ -11,6 +11,9 @@ By identifying the most important features in each project that contribute to co
 ## Approach
 This full-stack application was set up to extract project data (living in Smartsheet) as well as Lumber market data (using python `yfinance`).  The data was loaded into two postgres tables, where it can be used for Tableau visualizations and machine learning analysis.  The features in the data set were ranked using Random Forest Classification, and multiple algorithms were trained using the top features.  An analysis was conducted to determine the best algorithm, which was then selected for use in the application.  Input fields in the web page allow a user to get a rapid estimate by inputting values via UI.
 
+## Presentation Link
+[Google Sheets](https://docs.google.com/presentation/d/1E0e1VX8CVXSRtzUVqDiT2cXg12UXtQkcOs-tXCa7G0o/edit?usp=sharing)
+
 ## NOTE
 Because the data extracted by this application is proprietary, it cannot be run by users outside of Project Frog.  The repo is provided for code analysis reasons only.  Refer to the files in `notebooks` for some samples of data and machine learning results. 
 
@@ -21,4 +24,3 @@ GOOGLE_API_KEY = 'your-key'
 LUMBER_INDEX = 'LBS=F'
 STEEL_INDEX = '^DJUSST'
 ```
-
