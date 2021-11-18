@@ -79,7 +79,7 @@
           <select class="form-control" id='vendor'>
             <option>Golden State</option>
             <option>Mitsui</option>
-            <option>Redbuilt</option>
+            <option>RedBuilt</option>
             <option>SR Sloan</option>
             <option>Stark Truss</option>
           </select>
@@ -109,9 +109,9 @@
         <div class='form-group'>
           <label for="algorithm">Algorithm</label>
           <select class="form-control" id='algorithm'>
-            <option>KNNRegressor</option>
             <option>RandomForestRegressor</option>
-            <option>LinearRegressor</option>
+            <option>KNeighborsRegressor</option>
+            <option>LinearRegression</option>
           </select>
         </div>
         <div class="form-group">
@@ -129,41 +129,33 @@
       <h2>Data Utilities</h2>
 
       <div class="col-sm-4">
-        <form method="POST" action="/sync">
-          <input class="btn btn-primary" type="submit" value="Sync Database" name="sync"
-            title="Gets latest data from smartsheet (projects) and yahoo finance (lumber) and stores them in the database.">
-        </form>
+        <button id="sync-btn"class="btn btn-primary" type="submit" name="sync"
+          title="Gets latest data from smartsheet (projects) and yahoo finance (lumber) and stores them in the database.">Sync Database</button>  
       </div>
 
       <div class="col-sm-4">
-        <form method="POST" action="/deleteProjects">
-          <input class="btn btn-danger" type="submit" value="Delete Projects" name="deleteProjects"
-            title="Deletes all db rows from the Projects table. Required before sync if fields in existing projects must change." />
-        </form>
+          <button id="delete-projects-btn" class="btn btn-danger" type="submit" name="deleteProjects"
+            title="Deletes all db rows from the Projects table. Required before sync if fields in existing projects must change.">Delete Projects</button>
       </div>
       <div class="col-sm-4">
-        <form method="POST" action="/deleteLumber">
-          <input class="btn btn-danger" type="submit" value="Delete Lumber Prices" name="deleteLumber"
-            title="Deletes all db rows from the Lumber Index table." />
-        </form>
+          <button id="delete-lumber-btn" class="btn btn-danger" type="submit" name="deleteLumber"
+            title="Deletes all db rows from the Lumber Index table.">Delete Lumber Prices</button>
       </div>
     </div> 
     <hr>
     <div class="row" id="ml-utilities">
       <h2>ML Utilities</h2>
       <div class="col-sm-4">
-        <form method="POST" action="/train">
-          <input class="btn btn-info" type="submit" value="Train Algorithms" name="train"
-            title="Retrains all algorithms from database, then reports the scores of each.">
-        </form>
+          <button id="train-btn" class="btn btn-info" type="submit"
+            title="Retrains all algorithms from database, then reports the scores of each.">Train Algorithms</button>
       </div>
     </div>  
     <hr>
     <div class='row' id='output'>
       <h2>Utility Output</h2>
       <div class="form-row">
-        <div class="col-auto">
-          <textarea class='form-control col-md-12' id="sync-message">{{sync_message}}</textarea>
+        <div class="col-auto border-primary" style="height:500px">
+          <p id="utility-output">{{message}}</p>
         </div>
       </div>
     </div>

@@ -1,0 +1,9 @@
+<p><b>RandomForestRegressor: </b>{{scores.RandomForestRegressor}}</p>
+<p><b>KNeighborsRegressor: </b>{{scores.KNeighborsRegressor}}</p>
+<p><b>LinearRegression: </b>{{scores.LinearRegression}}</p>
+<p>Feature Importances:</p> 
+<ol>
+    {%for feat in f_importances%}
+    <li>{{feat[1]}}: {{feat[0]}}</li>
+    {%endfor%}
+</ol>

@@ -13,6 +13,7 @@ This full-stack application was set up to extract project data (living in Smarts
 
 ## Presentation Link
 [Google Sheets](https://docs.google.com/presentation/d/1E0e1VX8CVXSRtzUVqDiT2cXg12UXtQkcOs-tXCa7G0o/edit?usp=sharing)
+[Video](https://drive.google.com/file/d/1yeGrHc8HvhTWLo-PNcUrgnUzCABiAsOF/view?usp=sharing)
 
 ## NOTE
 Because the data extracted by this application is proprietary, it cannot be run by users outside of Project Frog.  The repo is provided for code analysis reasons only.  Refer to the files in `notebooks` for some samples of data and machine learning results. 
